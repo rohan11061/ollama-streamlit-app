@@ -1,27 +1,36 @@
 FROM ubuntu:22.04
 
-# Install basic tools
-RUN apt-get update && \
-    apt-get install -y curl sudo git python3 python3-pip
+# 1. Install dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    sudo \
+    git \
+    python3 \
+    python3-pip \
+    lsb-release \
+    gnupg \
+    software-properties-common
 
-# Install Ollama
-RUN curl -fsSL https://ollama.com/install.sh | sh
+# 2. Install Ollama system-wide
+RUN curl -fsSL https://ollama.com/install.sh | bash
 
-# Add ollama to PATH
-ENV PATH="/root/.ollama/bin:${PATH}"
+# 3. Add Ollama to PATH
+ENV PATH="/usr/local/bin:/root/.ollama/bin:$PATH"
 
-# Pull llama2 model
-RUN /root/.ollama/bin/ollama pull llama2
+# 4. Pull the llama2 model
+RUN ollama pull llama2
 
-# Copy app
+# 5. Set working directory
 WORKDIR /app
+
+# 6. Copy app files
 COPY . /app
 
-# Install Python dependencies
+# 7. Install Python requirements
 RUN pip3 install -r requirements.txt
 
-# Expose Streamlit port
+# 8. Expose Streamlit port
 EXPOSE 8501
 
-# Start Ollama and Streamlit together
+# 9. Run Ollama + Streamlit together
 CMD ollama serve & streamlit run app.py --server.port=8501 --server.address=0.0.0.0
