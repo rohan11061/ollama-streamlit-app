@@ -1,10 +1,10 @@
 services:
   - type: web
-    name: ollama-streamlit
+    name: app
     env: docker
     repo: https://github.com/rohan11061/ollama-streamlit-app
     region: oregon
     plan: starter
-    branch: main
+    branch: master
     healthCheckPath: /
     autoDeploy: true
